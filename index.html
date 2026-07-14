@@ -31,7 +31,11 @@
   .screen.active{display:block;}
 
   /* ---- hero ---- */
-  .hero{padding:28px 20px 20px;position:relative;}
+  .hero{
+    padding:28px 20px 20px;position:relative;
+    background-image:linear-gradient(rgba(22,36,28,0.55), rgba(22,36,28,0.9)), url('photos/hero.jpg');
+    background-size:cover;background-position:center;background-color:var(--bg);
+  }
   .hero h1{font-size:30px;color:var(--text);}
   .hero p{color:var(--text-secondary);font-size:14px;margin-top:6px;}
   .ripple{width:100%;height:14px;margin-top:18px;}
@@ -42,10 +46,13 @@
   .gallery::-webkit-scrollbar{display:none;}
   .gallery .thumb{
     flex:0 0 auto;width:96px;height:96px;
-    background:var(--surface-2);
+    background-color:var(--surface-2);background-size:cover;background-position:center;
     border-radius:40% 60% 62% 38% / 55% 35% 65% 45%;
-    display:flex;align-items:center;justify-content:center;
-    font-size:11px;color:var(--text-secondary);text-align:center;padding:8px;
+    display:flex;align-items:flex-end;justify-content:center;
+  }
+  .gallery .thumb-cap{
+    font-size:9px;color:var(--text);background:rgba(22,36,28,0.55);
+    padding:2px 6px;border-radius:6px;margin-bottom:10px;text-align:center;
   }
 
   /* ---- section cards ---- */
@@ -67,9 +74,7 @@
   /* ---- detail screen ---- */
   .detail-photo{
     height:200px;margin:0 20px 16px;border-radius:16px;
-    background:var(--surface-2);
-    display:flex;align-items:center;justify-content:center;
-    color:var(--text-secondary);font-size:13px;text-align:center;padding:12px;
+    background-color:var(--surface-2);background-size:cover;background-position:center;
   }
   .detail-body{padding:0 20px;}
   .detail-body h2{font-size:22px;margin-bottom:8px;}
@@ -127,13 +132,7 @@
     <svg class="ripple" viewBox="0 0 300 14"><path d="M0 7 Q 15 0, 30 7 T 60 7 T 90 7 T 120 7 T 150 7 T 180 7 T 210 7 T 240 7 T 270 7 T 300 7"/></svg>
   </div>
 
-  <div class="gallery">
-    <div class="thumb">фото<br>аквапарк</div>
-    <div class="thumb">фото<br>батути</div>
-    <div class="thumb">фото<br>олені</div>
-    <div class="thumb">фото<br>чан</div>
-    <div class="thumb">фото<br>альтанки</div>
-  </div>
+  <div class="gallery" id="gallery"></div>
 
   <div class="list" id="section-list"></div>
 
@@ -148,7 +147,7 @@
     <div class="back-btn" onclick="showScreen('screen-home')">←</div>
     <div class="label">Rancho park</div>
   </div>
-  <div class="detail-photo" id="detail-photo">фото розділу — додається пізніше</div>
+  <div class="detail-photo" id="detail-photo"></div>
   <div class="detail-body">
     <h2 id="detail-title"></h2>
     <p id="detail-text"></p>
@@ -200,6 +199,27 @@ const SECTIONS = [
   {key:"menu", title:"Меню кафе", sub:"Перегляд · замовлення скоро", text:"Онлайн-замовлення поки недоступне — меню можна переглянути на місці або запитати в адміністратора.", muted:true}
 ];
 
+// Назва файлу фото для кожного розділу. Щоб змінити фото — просто
+// заміни файл з такою самою назвою в папці photos на GitHub.
+const PHOTOS = {
+  aquapark: "photos/aquapark.jpg",
+  trampolines: "photos/trampolines.jpg",
+  zoo: "photos/zoo.jpg",
+  chan: "photos/chan.jpg",
+  gazebo: "photos/gazebo.jpg",
+  menu: "photos/menu.jpg"
+};
+
+function renderGallery(){
+  const gallery = document.getElementById("gallery");
+  gallery.innerHTML = SECTIONS.map(s => `
+    <div class="thumb" style="background-image:url('${PHOTOS[s.key]}')">
+      <span class="thumb-cap">${s.title}</span>
+    </div>
+  `).join("");
+}
+renderGallery();
+
 function renderList(){
   const list = document.getElementById("section-list");
   list.innerHTML = SECTIONS.map(s => `
@@ -224,7 +244,7 @@ function openDetail(key){
   if (!s) return;
   document.getElementById("detail-title").textContent = s.title;
   document.getElementById("detail-text").textContent = s.text;
-  document.getElementById("detail-photo").textContent = "фото: " + s.title.toLowerCase();
+  document.getElementById("detail-photo").style.backgroundImage = `url('${PHOTOS[key]}')`;
   showScreen("screen-detail");
 }
 
